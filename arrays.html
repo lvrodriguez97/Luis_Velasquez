@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arrays y Matrices en Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --border2: #3d444d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --blue: #388bfd;
+    --blue-bg: #1f3358;
+    --blue-text: #79c0ff;
+    --amber: #d29922;
+    --amber-bg: #341a00;
+    --amber-text: #e3b341;
+    --green: #3fb950;
+    --green-bg: #1a2d1a;
+    --green-text: #7ee787;
+    --red: #f85149;
+    --red-bg: #300a0a;
+    --red-text: #ffa198;
+    --purple: #a371f7;
+    --purple-bg: #2a1f44;
+    --purple-text: #d2a8ff;
+    --teal: #2ea8a8;
+    --teal-bg: #0d2626;
+    --teal-text: #39d3d3;
+    --font-code: 'JetBrains Mono', monospace;
+    --font-ui: 'Syne', sans-serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --transition: .18s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-badge {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--blue);
+    letter-spacing: .05em;
+  }
+  .header-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+    font-family: var(--font-code);
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: flex;
+    height: calc(100vh - 61px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .sidebar-section {
+    font-family: var(--font-code);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .1em;
+    padding: 10px 18px 4px;
+    text-transform: uppercase;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 18px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: var(--muted);
+    font-family: var(--font-ui);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: var(--transition);
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+  .nav-item:hover { color: var(--text); background: var(--bg3); }
+  .nav-item.active {
+    color: var(--blue-text);
+    background: var(--blue-bg);
+    border-left-color: var(--blue);
+  }
+  .nav-num {
+    font-family: var(--font-code);
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--bg4);
+    color: var(--muted);
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+  .nav-item.active .nav-num {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 36px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* PANEL HEADER */
+  .panel-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .panel-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+
+  /* ARRAY VISUAL */
+  .array-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .array-indices {
+    display: flex;
+    gap: 4px;
+  }
+  .idx-label {
+    width: 68px;
+    text-align: center;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    padding: 2px 0;
+    font-weight: 500;
+  }
+  .array-cells {
+    display: flex;
+    gap: 4px;
+  }
+  .cell {
+    width: 68px;
+    height: 60px;
+    background: var(--bg3);
+    border: 1.5px solid var(--border2);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    user-select: none;
+  }
+  .cell:hover { border-color: var(--blue); background: var(--bg4); }
+  .cell.active { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-text); }
+  .cell.error  { background: var(--red-bg); border-color: var(--red); color: var(--red-text); animation: shake .3s; }
+  .cell.visited { background: var(--green-bg); border-color: var(--green); color: var(--green-text); }
+  .cell.current { background: var(--amber-bg); border-color: var(--amber); color: var(--amber-text); animation: pulse .6s; }
+
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+
+  /* INFO BOX */
+  .info-box {
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    border-left: 3px solid;
+    font-size: 13.5px;
+    line-height: 1.6;
+    font-family: var(--font-code);
+  }
+  .info-box.blue  { background: var(--blue-bg);   border-color: var(--blue);   color: var(--blue-text); }
+  .info-box.amber { background: var(--amber-bg);  border-color: var(--amber);  color: var(--amber-text); }
+  .info-box.green { background: var(--green-bg);  border-color: var(--green);  color: var(--green-text); }
+  .info-box.red   { background: var(--red-bg);    border-color: var(--red);    color: var(--red-text); }
+  .info-box.muted { background: var(--bg3);       border-color: var(--border2); color: var(--muted); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    font-family: var(--font-code);
+    font-size: 13px;
+    line-height: 1.75;
+    overflow-x: auto;
+    margin-top: 16px;
+    white-space: pre;
+    color: var(--text);
+    tab-size: 4;
+  }
+  .code-block .kw   { color: #ff7b72; }
+  .code-block .ty   { color: var(--teal-text); }
+  .code-block .str  { color: var(--green-text); }
+  .code-block .num  { color: var(--amber-text); }
+  .code-block .cm   { color: var(--muted); font-style: italic; }
+  .code-block .hl   { background: #1f3358; border-radius: 3px; padding: 0 3px; color: var(--blue-text); }
+  .code-block .err  { background: var(--red-bg); border-radius: 3px; padding: 0 3px; color: var(--red-text); }
+  .code-block .ok   { background: var(--green-bg); border-radius: 3px; padding: 0 3px; color: var(--green-text); }
+
+  /* SECTION DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* SLIDER CONTROL */
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .control-label { font-size: 13px; color: var(--muted); font-family: var(--font-code); min-width: 80px; }
+  .control-row input[type=range] { flex: 1; cursor: pointer; accent-color: var(--blue); }
+  .control-val {
+    font-family: var(--font-code);
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 28px;
+    text-align: center;
+    color: var(--blue-text);
+  }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 8px; margin: 18px 0; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .btn:hover { background: var(--bg4); border-color: var(--blue); color: var(--blue-text); }
+  .btn.primary { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-text); }
+  .btn.primary:hover { background: #2a4a7f; }
+  .btn.danger  { background: var(--red-bg); border-color: var(--red); color: var(--red-text); }
+  .btn.success { background: var(--green-bg); border-color: var(--green); color: var(--green-text); }
+
+  /* FOR LOOP STEPS */
+  .step-list { display: flex; flex-direction: column; gap: 6px; margin: 18px 0; }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    font-family: var(--font-code);
+    font-size: 13px;
+    color: var(--muted);
+    transition: var(--transition);
+  }
+  .step-item.active {
+    background: var(--amber-bg);
+    border-color: var(--amber);
+    color: var(--amber-text);
+  }
+  .step-item.done {
+    background: var(--green-bg);
+    border-color: var(--green);
+    color: var(--green-text);
+  }
+  .step-item.end-step {
+    background: var(--purple-bg);
+    border-color: var(--purple);
+    color: var(--purple-text);
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border2);
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+  .step-item.active .step-dot  { background: var(--amber); }
+  .step-item.done   .step-dot  { background: var(--green); }
+  .step-item.end-step .step-dot { background: var(--purple); }
+
+  /* MATRIX */
+  .mat-outer {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .mat-row-labels { display: flex; flex-direction: column; gap: 4px; padding-top: 36px; }
+  .mat-row-label {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    width: 32px;
+  }
+  .mat-col-labels { display: flex; gap: 4px; margin-bottom: 4px; }
+  .mat-col-label {
+    width: 52px;
+    text-align: center;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mat-grid { display: flex; flex-direction: column; gap: 4px; }
+  .mat-row  { display: flex; gap: 4px; }
+  .mat-cell {
+    width: 52px;
+    height: 52px;
+    background: var(--bg3);
+    border: 1.5px solid var(--border2);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+  }
+  .mat-cell:hover { border-color: var(--blue); background: var(--bg4); }
+  .mat-cell.row-hl  { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-text); }
+  .mat-cell.col-hl  { background: var(--amber-bg); border-color: var(--amber); color: var(--amber-text); }
+  .mat-cell.selected { background: var(--purple-bg); border-color: var(--purple); color: var(--purple-text); transform: scale(1.08); z-index: 1; }
+
+  /* ERROR ACCORDION */
+  .error-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .error-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .error-header:hover { background: var(--bg4); }
+  .error-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+  .error-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+  .error-arrow {
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform var(--transition);
+  }
+  .error-card.open .error-arrow { transform: rotate(90deg); }
+  .error-body {
+    display: none;
+    padding: 0 18px 18px;
+  }
+  .error-card.open .error-body { display: block; }
+
+  /* SUMMARY CHIPS */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .chip {
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-family: var(--font-code);
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .chip-blue   { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue); }
+  .chip-amber  { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber); }
+  .chip-green  { background: var(--green-bg); color: var(--green-text); border-color: var(--green); }
+  .chip-purple { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple); }
+  .chip-teal   { background: var(--teal-bg); color: var(--teal-text); border-color: var(--teal); }
+  .chip-red    { background: var(--red-bg); color: var(--red-text); border-color: var(--red); }
+
+  /* TWO-COL GRID */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: var(--font-code);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span class="header-badge">JAVA</span>
+  <span class="header-title">Arrays y Matrices</span>
+  <span class="header-sub">Fundamentos de Programacion</span>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">Arrays 1D</div>
+    <button class="nav-item active" onclick="show('p1',this)">
+      <span class="nav-num">1</span> Estructura
+    </button>
+    <button class="nav-item" onclick="show('p2',this)">
+      <span class="nav-num">2</span> Acceso por indice
+    </button>
+    <button class="nav-item" onclick="show('p3',this)">
+      <span class="nav-num">3</span> Recorrido for
+    </button>
+    <div class="sidebar-section">Arrays 2D</div>
+    <button class="nav-item" onclick="show('p4',this)">
+      <span class="nav-num">4</span> Matriz 2D
+    </button>
+    <button class="nav-item" onclick="show('p5',this)">
+      <span class="nav-num">5</span> Recorrido anidado
+    </button>
+    <div class="sidebar-section">Errores</div>
+    <button class="nav-item" onclick="show('p6',this)">
+      <span class="nav-num">!</span> Errores frecuentes
+    </button>
+  </nav>
+
+  <main class="main">
+
+    <!-- ============================================================ -->
+    <!-- PANEL 1: ESTRUCTURA -->
+    <!-- ============================================================ -->
+    <div id="p1" class="panel active">
+      <div class="panel-title">Estructura de un Array</div>
+      <div class="panel-desc">Un array es una secuencia de celdas del mismo tipo con un tamano fijo. Cada celda tiene un indice que comienza en <strong>0</strong>. Haz clic en cualquier celda para inspeccionar su posicion.</div>
+
+      <div class="array-wrap">
+        <div class="array-indices" id="arr1-idx"></div>
+        <div class="array-cells"  id="arr1-cells"></div>
+      </div>
+      <div class="info-box muted" id="arr1-info">Haz clic en una celda para ver su descripcion.</div>
+
+      <div class="two-col" style="margin-top:24px">
+        <div class="card">
+          <div class="card-title">Declaracion</div>
+          <div class="code-block" style="margin-top:0;padding:12px 14px;font-size:12px"><span class="ty">int</span><span class="hl">[]</span> notas;
+<span class="ty">double</span><span class="hl">[]</span> precios;
+<span class="ty">String</span><span class="hl">[]</span> nombres;</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Creacion e inicializacion</div>
+          <div class="code-block" style="margin-top:0;padding:12px 14px;font-size:12px"><span class="ty">int</span>[] notas = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">5</span>];
+<span class="ty">int</span>[] notas = {<span class="num">10</span>, <span class="num">25</span>, <span class="num">8</span>, <span class="num">47</span>, <span class="num">3</span>};
+System.out.println(notas<span class="hl">.length</span>); <span class="cm">// 5</span></div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="info-box blue">
+        <strong>Regla clave:</strong> si <code>length = 5</code>, los indices validos son <strong>0, 1, 2, 3, 4</strong>. El indice 5 no existe y lanza ArrayIndexOutOfBoundsException.
+      </div>
+
+      <div class="chip-row">
+        <span class="chip chip-blue">Indice empieza en 0</span>
+        <span class="chip chip-amber">Ultimo indice = length - 1</span>
+        <span class="chip chip-green">Tamano fijo en tiempo de creacion</span>
+        <span class="chip chip-purple">Todos los elementos del mismo tipo</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL 2: ACCESO -->
+    <!-- ============================================================ -->
+    <div id="p2" class="panel">
+      <div class="panel-title">Acceso por indice</div>
+      <div class="panel-desc">Mueve el slider para seleccionar un indice. Ver en vivo que devuelve Java y que pasa cuando el indice esta fuera de rango.</div>
+
+      <div class="control-row">
+        <span class="control-label">Indice i =</span>
+        <input type="range" id="idx-slider" min="0" max="6" value="0" step="1" oninput="updateIdx(this.value)">
+        <span class="control-val" id="idx-val">0</span>
+      </div>
+
+      <div class="array-wrap">
+        <div class="array-indices" id="arr2-idx"></div>
+        <div class="array-cells"  id="arr2-cells"></div>
+      </div>
+
+      <div class="info-box muted" id="idx-info" style="margin-top:12px"></div>
+
+      <div class="code-block" id="idx-code" style="margin-top:16px"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL 3: FOR LOOP -->
+    <!-- ============================================================ -->
+    <div id="p3" class="panel">
+      <div class="panel-title">Recorrido con ciclo for</div>
+      <div class="panel-desc">Presiona <strong>Siguiente</strong> para avanzar paso a paso, o <strong>Auto</strong> para animacion continua. El ciclo visita cada celda exactamente una vez.</div>
+
+      <div class="array-wrap">
+        <div class="array-indices" id="arr3-idx"></div>
+        <div class="array-cells"  id="arr3-cells"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="forStep()">Siguiente</button>
+        <button class="btn" id="auto-btn" onclick="forAuto()">Auto</button>
+        <button class="btn" onclick="forReset()">Reiniciar</button>
+      </div>
+
+      <div class="step-list" id="for-steps"></div>
+
+      <hr class="divider">
+
+      <div class="two-col">
+        <div>
+          <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">For clasico</div>
+          <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; notas.<span class="hl">length</span>; i++) {
+    System.out.println(notas[<span class="hl">i</span>]);
+}</div>
+        </div>
+        <div>
+          <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">For-each (solo lectura)</div>
+          <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (<span class="ty">int</span> n : notas) {
+    System.out.println(<span class="hl">n</span>);
+}
+<span class="cm">// no hay indice disponible</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL 4: MATRIZ -->
+    <!-- ============================================================ -->
+    <div id="p4" class="panel">
+      <div class="panel-title">Matriz 2D (array de arrays)</div>
+      <div class="panel-desc">Una matriz se declara como <code style="color:var(--teal-text)">int[][]</code>. La notacion es siempre <strong>mat[fila][columna]</strong>. Haz clic en una celda para ver su posicion.</div>
+
+      <div class="mat-outer">
+        <div class="mat-row-labels" id="mat-row-labels"></div>
+        <div>
+          <div class="mat-col-labels" id="mat-col-labels"></div>
+          <div class="mat-grid" id="mat-grid"></div>
+        </div>
+      </div>
+
+      <div class="info-box muted" id="mat-info">Haz clic en una celda de la matriz.</div>
+
+      <div class="code-block" style="margin-top:16px"><span class="ty">int</span>[][] mat = {
+    {<span class="num">1</span>,  <span class="num">2</span>,  <span class="num">3</span>,  <span class="num">4</span>},
+    {<span class="num">5</span>,  <span class="num">6</span>,  <span class="num">7</span>,  <span class="num">8</span>},
+    {<span class="num">9</span>, <span class="num">10</span>, <span class="num">11</span>, <span class="num">12</span>}
+};
+
+System.out.println(mat.<span class="hl">length</span>);       <span class="cm">// 3 (filas)</span>
+System.out.println(mat[<span class="num">0</span>].<span class="hl">length</span>);    <span class="cm">// 4 (columnas de la fila 0)</span></div>
+
+      <div class="chip-row">
+        <span class="chip chip-blue">mat[i][j] = fila i, columna j</span>
+        <span class="chip chip-amber">mat.length = numero de filas</span>
+        <span class="chip chip-green">mat[i].length = columnas de fila i</span>
+        <span class="chip chip-purple">Puede ser no cuadrada (jagged array)</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL 5: RECORRIDO ANIDADO -->
+    <!-- ============================================================ -->
+    <div id="p5" class="panel">
+      <div class="panel-title">Recorrido anidado de matriz</div>
+      <div class="panel-desc">El for externo recorre las <strong style="color:var(--blue-text)">filas (i)</strong> y el for interno recorre las <strong style="color:var(--amber-text)">columnas (j)</strong>. Avanza paso a paso para ver como funciona.</div>
+
+      <div class="mat-outer">
+        <div class="mat-row-labels" id="mat2-row-labels"></div>
+        <div>
+          <div class="mat-col-labels" id="mat2-col-labels"></div>
+          <div class="mat-grid" id="mat2-grid"></div>
+        </div>
+      </div>
+
+      <div class="info-box muted" id="mat2-info" style="margin-top:0;margin-bottom:16px"></div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="matStep()">Siguiente</button>
+        <button class="btn" id="mat-auto-btn" onclick="matAuto()">Auto</button>
+        <button class="btn" onclick="matReset()">Reiniciar</button>
+      </div>
+
+      <div class="code-block"><span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; mat.<span class="hl">length</span>; i++) {         <span class="cm">// filas</span>
+    <span class="kw">for</span> (<span class="ty">int</span> j = <span class="num">0</span>; j &lt; mat[i].<span class="hl">length</span>; j++) {  <span class="cm">// columnas</span>
+        System.out.print(mat[<span class="hl">i</span>][<span class="hl">j</span>] + <span class="str">" "</span>);
+    }
+    System.out.println(); <span class="cm">// salto de linea por fila</span>
+}
+<span class="cm">// Salida:
+//  1  2  3  4
+//  5  6  7  8
+//  9 10 11 12</span></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PANEL 6: ERRORES -->
+    <!-- ============================================================ -->
+    <div id="p6" class="panel">
+      <div class="panel-title">Errores frecuentes</div>
+      <div class="panel-desc">Los tres errores que cometen casi todos los estudiantes la primera vez. Haz clic para ver el codigo incorrecto y la correccion.</div>
+
+      <div class="error-card" id="ec1">
+        <div class="error-header" onclick="toggleErr('ec1')">
+          <span class="error-dot"></span>
+          <span class="error-title">Error 1: ArrayIndexOutOfBoundsException</span>
+          <span class="error-arrow">&#x276F;</span>
+        </div>
+        <div class="error-body">
+          <div class="info-box red" style="margin-bottom:12px">El indice maximo valido es <strong>length - 1</strong>. Acceder mas alla lanza esta excepcion en tiempo de ejecucion, no en compilacion.</div>
+          <div class="two-col">
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--red-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Incorrecto</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="ty">int</span>[] n = {<span class="num">10</span>,<span class="num">25</span>,<span class="num">8</span>,<span class="num">47</span>,<span class="num">3</span>};
+n[<span class="err">5</span>]; <span class="cm">// no existe</span>
+n[<span class="err">-1</span>]; <span class="cm">// tampoco</span></div>
+            </div>
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--green-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Correcto</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="ty">int</span>[] n = {<span class="num">10</span>,<span class="num">25</span>,<span class="num">8</span>,<span class="num">47</span>,<span class="num">3</span>};
+n[<span class="ok">4</span>]; <span class="cm">// ultimo valido</span>
+n[<span class="ok">n.length - 1</span>]; <span class="cm">// mejor</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-card" id="ec2">
+        <div class="error-header" onclick="toggleErr('ec2')">
+          <span class="error-dot"></span>
+          <span class="error-title">Error 2: condicion i &lt;= length en el for</span>
+          <span class="error-arrow">&#x276F;</span>
+        </div>
+        <div class="error-body">
+          <div class="info-box red" style="margin-bottom:12px"><code>notas.length</code> vale 5 (la cantidad de elementos). El ultimo indice es 4. Usar <code>&lt;=</code> hace que el ciclo intente acceder al indice 5, que no existe.</div>
+          <div class="two-col">
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--red-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Incorrecto</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>;
+     i <span class="err">&lt;=</span> notas.length; <span class="cm">// !</span>
+     i++) { ... }</div>
+            </div>
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--green-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Correcto</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>;
+     i <span class="ok">&lt;</span> notas.length;
+     i++) { ... }</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-card" id="ec3">
+        <div class="error-header" onclick="toggleErr('ec3')">
+          <span class="error-dot"></span>
+          <span class="error-title">Error 3: invertir fila y columna en la matriz</span>
+          <span class="error-arrow">&#x276F;</span>
+        </div>
+        <div class="error-body">
+          <div class="info-box red" style="margin-bottom:12px">En <code>mat[i][j]</code>, <strong>i es siempre la fila</strong> y <strong>j la columna</strong>. Invertirlos accede a un elemento equivocado o produce una excepcion si la matriz no es cuadrada.</div>
+          <div class="two-col">
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--red-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Incorrecto</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (i ...) {
+  <span class="kw">for</span> (j ...) {
+    mat[<span class="err">j</span>][<span class="err">i</span>]; <span class="cm">// invertido</span>
+  }
+}</div>
+            </div>
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--green-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Correcto</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (i ...) {
+  <span class="kw">for</span> (j ...) {
+    mat[<span class="ok">i</span>][<span class="ok">j</span>]; <span class="cm">// [fila][col]</span>
+  }
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-card" id="ec4">
+        <div class="error-header" onclick="toggleErr('ec4')">
+          <span class="error-dot"></span>
+          <span class="error-title">Error 4: modificar el array en un for-each</span>
+          <span class="error-arrow">&#x276F;</span>
+        </div>
+        <div class="error-body">
+          <div class="info-box red" style="margin-bottom:12px">En el for-each, la variable de iteracion es una <strong>copia</strong> del valor, no una referencia a la celda. Asignarle un valor no modifica el array original.</div>
+          <div class="two-col">
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--red-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Incorrecto (no modifica)</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (<span class="ty">int</span> n : notas) {
+    n = <span class="err">n * 2</span>; <span class="cm">// solo copia</span>
+}</div>
+            </div>
+            <div>
+              <div class="card-title" style="font-family:var(--font-code);font-size:11px;color:var(--green-text);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Correcto (modifica)</div>
+              <div class="code-block" style="margin-top:0;font-size:12.5px"><span class="kw">for</span> (<span class="ty">int</span> i=<span class="num">0</span>;
+     i&lt;notas.length; i++) {
+    notas[<span class="ok">i</span>] = notas[i] * <span class="num">2</span>;
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const vals1 = [10, 25, 8, 47, 3];
+
+function buildArray(idxId, cellsId, vals, clickFn) {
+  const idxCont   = document.getElementById(idxId);
+  const cellsCont = document.getElementById(cellsId);
+  idxCont.innerHTML = '';
+  cellsCont.innerHTML = '';
+  vals.forEach((v, i) => {
+    const lbl = document.createElement('div');
+    lbl.className = 'idx-label';
+    lbl.textContent = '[' + i + ']';
+    idxCont.appendChild(lbl);
+
+    const c = document.createElement('div');
+    c.className = 'cell';
+    c.textContent = v;
+    c.dataset.i = i;
+    if (clickFn) c.onclick = () => clickFn(i, c);
+    cellsCont.appendChild(c);
+  });
+}
+
+buildArray('arr1-idx', 'arr1-cells', vals1, (i) => {
+  document.querySelectorAll('#arr1-cells .cell').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#arr1-cells .cell')[i].classList.add('active');
+  const info = document.getElementById('arr1-info');
+  info.className = 'info-box blue';
+  info.innerHTML = '<strong>notas[' + i + ']</strong> &rarr; valor <strong>' + vals1[i] + '</strong>. Indice ' + i + ' de ' + vals1.length + ' elementos (0 al ' + (vals1.length-1) + ').';
+});
+
+buildArray('arr2-idx', 'arr2-cells', vals1, null);
+updateIdx(0);
+
+function updateIdx(v) {
+  v = parseInt(v);
+  document.getElementById('idx-val').textContent = v;
+  const cells = document.querySelectorAll('#arr2-cells .cell');
+  cells.forEach(c => c.classList.remove('active', 'error'));
+  const info = document.getElementById('idx-info');
+  const code = document.getElementById('idx-code');
+  if (v <= 4) {
+    cells[v].classList.add('active');
+    info.className = 'info-box green';
+    info.innerHTML = '<strong>notas[' + v + ']</strong> &rarr; <strong>' + vals1[v] + '</strong>. Acceso valido. Indice dentro del rango [0 .. ' + (vals1.length-1) + '].';
+    code.innerHTML = '<span class="ty">int</span> valor = notas[<span class="hl">' + v + '</span>]; <span class="cm">// devuelve: ' + vals1[v] + '</span>';
+  } else {
+    cells.forEach(c => c.classList.add('error'));
+    info.className = 'info-box red';
+    info.innerHTML = '<strong>ArrayIndexOutOfBoundsException:</strong> indice <strong>' + v + '</strong> esta fuera de rango. El array tiene ' + vals1.length + ' elementos, indices validos: 0 a ' + (vals1.length-1) + '.';
+    code.innerHTML = 'notas[<span class="err">' + v + '</span>]; <span class="cm">// EXCEPCION en tiempo de ejecucion</span>';
+  }
+}
+
+buildArray('arr3-idx', 'arr3-cells', vals1, null);
+const forStepsData = [
+  { label: 'i = 0 → condicion 0 &lt; 5 → true → notas[0] = 10', val: 0 },
+  { label: 'i++ → i = 1 → condicion 1 &lt; 5 → true → notas[1] = 25', val: 1 },
+  { label: 'i++ → i = 2 → condicion 2 &lt; 5 → true → notas[2] = 8', val: 2 },
+  { label: 'i++ → i = 3 → condicion 3 &lt; 5 → true → notas[3] = 47', val: 3 },
+  { label: 'i++ → i = 4 → condicion 4 &lt; 5 → true → notas[4] = 3', val: 4 },
+  { label: 'i++ → i = 5 → condicion 5 &lt; 5 → false. Ciclo terminado.', val: -1 },
+];
+
+const stepsContainer = document.getElementById('for-steps');
+forStepsData.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item' + (i === 0 ? ' active' : '');
+  d.id = 'fstep-' + i;
+  d.innerHTML = '<span class="step-dot"></span><span>' + s.label + '</span>';
+  stepsContainer.appendChild(d);
+});
+
+let forIdx = 0, forTimer = null;
+
+function forHighlight(idx) {
+  forStepsData.forEach((s, i) => {
+    const el = document.getElementById('fstep-' + i);
+    el.classList.remove('active', 'done', 'end-step');
+    if (i < idx) el.classList.add('done');
+    else if (i === idx && idx === 5) el.classList.add('end-step');
+    else if (i === idx) el.classList.add('active');
+  });
+  const cells = document.querySelectorAll('#arr3-cells .cell');
+  cells.forEach((c, ci) => {
+    c.classList.remove('visited', 'current');
+    if (ci < idx && idx < 5) c.classList.add('visited');
+    else if (ci === idx) c.classList.add('current');
+    if (idx === 5) c.classList.add('visited');
+  });
+}
+
+function forStep() {
+  if (forTimer) return;
+  if (forIdx <= 5) { forHighlight(forIdx); forIdx = Math.min(forIdx + 1, 6); }
+}
+function forReset() {
+  if (forTimer) { clearInterval(forTimer); forTimer = null; document.getElementById('auto-btn').textContent = 'Auto'; }
+  forIdx = 0;
+  forHighlight(0);
+}
+function forAuto() {
+  if (forTimer) { clearInterval(forTimer); forTimer = null; document.getElementById('auto-btn').textContent = 'Auto'; return; }
+  forReset();
+  document.getElementById('auto-btn').textContent = 'Pausar';
+  forTimer = setInterval(() => {
+    forHighlight(forIdx);
+    forIdx++;
+    if (forIdx > 5) { clearInterval(forTimer); forTimer = null; document.getElementById('auto-btn').textContent = 'Auto'; }
+  }, 800);
+}
+
+const matData = [[1,2,3,4],[5,6,7,8],[9,10,11,12]];
+const ROWS = 3, COLS = 4;
+
+function buildMatrix(rowLblId, colLblId, gridId, clickFn) {
+  const rowLbl = document.getElementById(rowLblId);
+  const colLbl = document.getElementById(colLblId);
+  const grid   = document.getElementById(gridId);
+  rowLbl.innerHTML = ''; colLbl.innerHTML = ''; grid.innerHTML = '';
+  for (let j = 0; j < COLS; j++) {
+    const h = document.createElement('div'); h.className = 'mat-col-label'; h.textContent = '[' + j + ']'; colLbl.appendChild(h);
+  }
+  for (let i = 0; i < ROWS; i++) {
+    const rh = document.createElement('div'); rh.className = 'mat-row-label'; rh.textContent = '[' + i + ']'; rowLbl.appendChild(rh);
+    const row = document.createElement('div'); row.className = 'mat-row';
+    for (let j = 0; j < COLS; j++) {
+      const c = document.createElement('div'); c.className = 'mat-cell';
+      c.textContent = matData[i][j]; c.dataset.r = i; c.dataset.c = j;
+      if (clickFn) c.onclick = () => clickFn(i, j, gridId);
+      row.appendChild(c);
+    }
+    grid.appendChild(row);
+  }
+}
+
+buildMatrix('mat-row-labels', 'mat-col-labels', 'mat-grid', (ri, ci, gridId) => {
+  document.querySelectorAll('#' + gridId + ' .mat-cell').forEach(c => {
+    const r = parseInt(c.dataset.r), cc = parseInt(c.dataset.c);
+    c.classList.remove('row-hl', 'col-hl', 'selected');
+    if (r === ri && cc === ci) c.classList.add('selected');
+    else if (r === ri) c.classList.add('row-hl');
+    else if (cc === ci) c.classList.add('col-hl');
+  });
+  const info = document.getElementById('mat-info');
+  info.className = 'info-box blue';
+  info.innerHTML = '<strong>mat[' + ri + '][' + ci + ']</strong> &rarr; valor <strong>' + matData[ri][ci] + '</strong>. Fila <strong>' + ri + '</strong>, columna <strong>' + ci + '</strong>.';
+});
+
+buildMatrix('mat2-row-labels', 'mat2-col-labels', 'mat2-grid', null);
+
+let matCurI = 0, matCurJ = 0, matTimer = null, matDone = false;
+
+function matHighlight(i, j, done) {
+  const cells = document.querySelectorAll('#mat2-grid .mat-cell');
+  cells.forEach(c => { c.classList.remove('row-hl', 'col-hl', 'selected', 'visited'); });
+  if (done) { cells.forEach(c => c.classList.add('visited')); return; }
+  cells.forEach(c => {
+    const cr = parseInt(c.dataset.r), cc = parseInt(c.dataset.c);
+    const idx = cr * COLS + cc;
+    const cur = i * COLS + j;
+    if (cr === i && cc === j) c.classList.add('selected');
+    else if (idx < cur) c.classList.add('visited');
+  });
+  const info = document.getElementById('mat2-info');
+  info.className = 'info-box amber';
+  info.innerHTML = 'i = <strong>' + i + '</strong>, j = <strong>' + j + '</strong> &rarr; mat[' + i + '][' + j + '] = <strong>' + matData[i][j] + '</strong>';
+}
+
+function matStep() {
+  if (matTimer) return;
+  if (matDone) return;
+  matHighlight(matCurI, matCurJ, false);
+  matCurJ++;
+  if (matCurJ >= COLS) { matCurJ = 0; matCurI++; }
+  if (matCurI >= ROWS) { matDone = true; matHighlight(0, 0, true); document.getElementById('mat2-info').className = 'info-box green'; document.getElementById('mat2-info').innerHTML = 'Recorrido completo. Se visitaron los ' + (ROWS*COLS) + ' elementos.'; }
+}
+function matReset() {
+  if (matTimer) { clearInterval(matTimer); matTimer = null; document.getElementById('mat-auto-btn').textContent = 'Auto'; }
+  matCurI = 0; matCurJ = 0; matDone = false;
+  document.querySelectorAll('#mat2-grid .mat-cell').forEach(c => c.classList.remove('row-hl','col-hl','selected','visited'));
+  const info = document.getElementById('mat2-info');
+  info.className = 'info-box muted'; info.textContent = 'Presiona Siguiente para comenzar.';
+}
+function matAuto() {
+  if (matTimer) { clearInterval(matTimer); matTimer = null; document.getElementById('mat-auto-btn').textContent = 'Auto'; return; }
+  matReset();
+  document.getElementById('mat-auto-btn').textContent = 'Pausar';
+  matTimer = setInterval(() => {
+    if (matDone) { clearInterval(matTimer); matTimer = null; document.getElementById('mat-auto-btn').textContent = 'Auto'; return; }
+    matStep();
+  }, 500);
+}
+
+matReset();
+forHighlight(0);
+updateIdx(0);
+
+function show(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleErr(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>
