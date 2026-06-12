@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio Visual: Arrays Estáticos en Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --border2: #3d444d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --blue: #388bfd;
+    --blue-bg: #1f3358;
+    --blue-text: #79c0ff;
+    --amber: #d29922;
+    --amber-bg: #341a00;
+    --amber-text: #e3b341;
+    --green: #3fb950;
+    --green-bg: #1a2d1a;
+    --green-text: #7ee787;
+    --red: #f85149;
+    --red-bg: #300a0a;
+    --red-text: #ffa198;
+    --purple: #a371f7;
+    --purple-bg: #2a1f44;
+    --purple-text: #d2a8ff;
+    --teal-text: #39d3d3;
+    --font-code: 'JetBrains Mono', monospace;
+    --font-ui: 'Syne', sans-serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .badge {
+    background: var(--amber-bg);
+    color: var(--amber-text);
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--amber);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+
+  .main-title { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .subtitle { color: var(--muted); margin-top: 4px; font-size: 15px; margin-bottom: 32px; }
+
+  /* EXERCISE CONTAINER */
+  .card-exercise {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
+  .exercise-header {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 10px;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  @media (max-width: 850px) { .split { grid-template-columns: 1fr; } }
+
+  /* CODE BOX */
+  .code-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: var(--font-code);
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    color: var(--text);
+    white-space: pre;
+  }
+  .code-block .kw  { color: #ff7b72; font-weight: 500; }
+  .code-block .ty  { color: var(--teal-text); }
+  .code-block .num { color: var(--amber-text); }
+  .code-block .str { color: var(--green-text); }
+  .code-block .cm  { color: var(--muted); font-style: italic; }
+  .code-block .highlight-line {
+    background: rgba(56, 139, 253, 0.15);
+    border-left: 3px solid var(--blue);
+    display: block;
+    width: 100%;
+    padding-left: 4px;
+  }
+  .code-block .error-line {
+    background: rgba(248, 81, 73, 0.15);
+    border-left: 3px solid var(--red);
+    display: block;
+    width: 100%;
+    padding-left: 4px;
+  }
+
+  /* VISUAL RAM SIMULATOR */
+  .visual-area {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .ram-title {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .memory-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .ram-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .cell-box {
+    width: 50px;
+    height: 50px;
+    background: var(--bg3);
+    border: 2px solid var(--border2);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code);
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+  }
+  .cell-idx {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* COLOR STATES */
+  .cell-box.active-blue { border-color: var(--blue); background: var(--blue-bg); }
+  .cell-box.active-red { border-color: var(--red); background: var(--red-bg); animation: shake 0.3s ease-in-out; }
+  .cell-box.active-green { border-color: var(--green); background: var(--green-bg); color: var(--green-text); }
+  .cell-box.locked { border-style: dashed; opacity: 0.25; background: transparent; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* INTERACTIVE CONTROLS */
+  .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .btn {
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.15s ease;
+  }
+  .btn:hover:not(:disabled) { background: #30363d; border-color: var(--muted); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .feedback-text {
+    font-family: var(--font-code);
+    font-size: 12.5px;
+    color: var(--amber-text);
+    background: var(--amber-bg);
+    padding: 6px 12px;
+    border-radius: 4px;
+    flex: 1;
+    border-left: 3px solid var(--amber);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="badge">ESTRUCTURAS FIJAS</span>
+  <h1 style="font-size: 18px; font-weight: 700;">Lección Técnica: La Naturaleza Estática de los Arrays</h1>
+</header>
+
+<div class="container">
+  <h2 class="main-title">¿Por qué los Arrays en Java no pueden cambiar de tamaño?</h2>
+  <p class="subtitle">Cuando creas un Array, Java reserva un bloque de memoria contiguo e inmutable. Explora estas 3 simulaciones físicas para entender cómo funciona la memoria RAM.</p>
+
+  <div class="card-exercise">
+    <div class="exercise-header">1. Inicialización Fija en Memoria Contigua</div>
+    <p>Al instanciar un array de tamaño 4, el Sistema Operativo asigna inmediatamente 4 casillas consecutivas. Las casillas vecinas quedan bloqueadas por otros procesos del sistema.</p>
+    
+    <div class="split">
+      <div class="code-block"><span class="cm">// Se reservan 4 espacios contiguos en la RAM</span>
+<span class="ty">int</span>[] edades = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">4</span>];
+<span class="highlight-line">edades[<span class="num">0</span>] = <span class="num">18</span>;</span>
+edades[<span class="num">1</span>] = <span class="num">25</span>;
+edades[<span class="num">2</span>] = <span class="num">32</span>;
+edades[<span class="num">3</span>] = <span class="num">40</span>;</div>
+      <div class="visual-area">
+        <div class="ram-title">Esquema de Memoria RAM asignada</div>
+        <div class="memory-row" id="row-ex1">
+          </div>
+        <div class="controls">
+          <button class="btn" id="btn-ex1" onclick="nextEx1()">Avanzar Línea</button>
+          <div class="feedback-text" id="fb-ex1">Haz clic para ver cómo se llenan los casilleros fijos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-exercise">
+    <div class="exercise-header">2. El Error de Desbordamiento (Fuera de Límites)</div>
+    <p>¿Qué pasa si intentamos añadir un 5to elemento en la posición <code>edades[4]</code>? Como el tamaño es estático, la casilla contigua pertenece a otra aplicación y Java bloquea el acceso por seguridad.</p>
+    
+    <div class="split">
+      <div class="code-block"><span class="ty">int</span>[] edades = {<span class="num">18</span>, <span class="num">25</span>, <span class="num">32</span>, <span class="num">40</span>};
+<span class="cm">// Tamaño: 4. Índices válidos: 0, 1, 2, 3.</span>
+
+<span class="error-line">edades[<span class="num">4</span>] = <span class="num">55</span>; <span class="cm">// ❌ INTENTO DE AGREGAR FUERA DE RANGO</span></span></div>
+      <div class="visual-area" style="border-color: rgba(248, 81, 73, 0.4)">
+        <div class="ram-title">Intrusión de perímetro de memoria</div>
+        <div class="memory-row">
+          <div class="ram-cell"><div class="cell-box">18</div><div class="cell-idx">[0]</div></div>
+          <div class="ram-cell"><div class="cell-box">25</div><div class="cell-idx">[1]</div></div>
+          <div class="ram-cell"><div class="cell-box">32</div><div class="cell-idx">[2]</div></div>
+          <div class="ram-cell"><div class="cell-box">40</div><div class="cell-idx">[3]</div></div>
+          <div class="ram-cell"><div class="cell-box active-red" id="cell-error">?</div><div class="cell-idx" style="color:var(--red-text)">[4]</div></div>
+          <div class="ram-cell"><div class="cell-box locked">RAM</div><div class="cell-idx">OS</div></div>
+        </div>
+        <div class="controls">
+          <button class="btn" onclick="triggerError()">Forzar Escritura Incorrecta</button>
+          <div class="feedback-text" id="fb-ex2" style="color: var(--red-text); background: var(--red-bg); border-color: var(--red);">Esperando acción...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-exercise">
+    <div class="exercise-header">3. La Solución Algorítmica: Redimensión Manual (Resize)</div>
+    <p>Para simular un crecimiento dinámico, los desarrolladores debemos crear un array completamente NUEVO en otra dirección de memoria, clonar los datos viejos e insertar el nuevo elemento.</p>
+    
+    <div class="split">
+      <div class="code-block"><span class="ty">int</span>[] viejo = {<span class="num">18</span>, <span class="num">25</span>, <span class="num">32</span>, <span class="num">40</span>};
+<span class="cm">// Creamos una nueva estructura con tamaño 5</span>
+<span class="ty">int</span>[] nuevo = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">5</span>];
+
+<span class="kw">for</span>(<span class="ty">int</span> i=<span class="num">0</span>; i&lt;viejo.length; i++) {
+    <span class="highlight-line">nuevo[i] = viejo[i]; <span class="cm">// Clonando...</span></span>
+}
+nuevo[<span class="num">4</span>] = <span class="num">55</span>; <span class="cm">// Insertando el nuevo</span></div>
+      <div class="visual-area" style="border-color: rgba(63, 185, 80, 0.4)">
+        <div class="ram-title">Evolución de Punteros en Memoria</div>
+        
+        <div style="font-size:11px; color:var(--muted)">ARRAY ORIGINAL (Viejo)</div>
+        <div class="memory-row" id="row-ex3-old"></div>
+        
+        <div style="font-size:11px; color:var(--muted)">ARRAY NUEVO (Destino expandido)</div>
+        <div class="memory-row" id="row-ex3-new"></div>
+
+        <div class="controls">
+          <button class="btn" id="btn-ex3" onclick="nextEx3()">Ejecutar Línea de Clonación</button>
+          <div class="feedback-text" id="fb-ex3" style="color:var(--green-text); background:var(--green-bg); border-color:var(--green)">Haz clic para iniciar el proceso de migración de datos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // JS SIMULACIÓN 1
+  // ==========================================
+  let step1 = 0;
+  const valEx1 = [18, 25, 32, 40];
+  const msgEx1 = [
+    "Línea 1: Se ejecuta 'new int[4]'. Java llena las celdas con ceros [0, 0, 0, 0] de manera por defecto.",
+    "Línea 2: Asignamos el valor 18 en el índice [0].",
+    "Línea 3: Asignamos el valor 25 en el índice [1].",
+    "Línea 4: Asignamos el valor 32 en el índice [2].",
+    "Línea 5: Asignamos el valor 40 en el índice [3]. Array lleno. No se puede estirar más."
+  ];
+
+  function renderEx1() {
+    const r = document.getElementById('row-ex1');
+    r.innerHTML = '';
+    for(let i=0; i<4; i++) {
+      let displayVal = "0";
+      let cClass = "";
+      if (step1 > 0) {
+        if (i < step1) {
+          displayVal = valEx1[i];
+          if(i === step1 - 1) cClass = "active-blue";
+        }
+      }
+      r.innerHTML += `<div class="ram-cell"><div class="cell-box ${cClass}">${displayVal}</div><div class="cell-idx">[${i}]</div></div>`;
+    }
+    // Agregar celda vecina bloqueada ficticia
+    r.innerHTML += `<div class="ram-cell"><div class="cell-box locked">RAM</div><div class="cell-idx">Bloqueado</div></div>`;
+    document.getElementById('fb-ex1').innerText = msgEx1[step1];
+  }
+
+  function nextEx1() {
+    step1++;
+    if(step1 >= msgEx1.length) step1 = 0; // Reset cíclico
+    renderEx1();
+  }
+
+  // ==========================================
+  // JS SIMULACIÓN 2
+  // ==========================================
+  function triggerError() {
+    const c = document.getElementById('cell-error');
+    c.innerText = "❌";
+    c.style.animation = 'none';
+    setTimeout(() => { c.style.animation = 'shake 0.3s ease-in-out'; }, 10);
+    document.getElementById('fb-ex2').innerText = "FATAL ERROR: ArrayIndexOutOfBoundsException. El programa se detuvo porque el índice 4 no pertenece a las casillas asignadas.";
+  }
+
+  // ==========================================
+  // JS SIMULACIÓN 3
+  // ==========================================
+  let step3 = 0;
+  const oldVals = [18, 25, 32, 40];
+  let newVals = ["?", "?", "?", "?", "?"];
+
+  function renderEx3() {
+    const rOld = document.getElementById('row-ex3-old');
+    const rNew = document.getElementById('row-ex3-new');
+    
+    // Render viejo
+    rOld.innerHTML = '';
+    oldVals.forEach((v, i) => {
+      let c = (i === step3 - 1 && step3 <= 4) ? "active-blue" : "";
+      rOld.innerHTML += `<div class="ram-cell"><div class="cell-box ${c}">${v}</div><div class="cell-idx">[${i}]</div></div>`;
+    });
+
+    // Render nuevo
+    rNew.innerHTML = '';
+    newVals.forEach((v, i) => {
+      let c = "";
+      if (i === step3 - 1 && step3 <= 4) c = "active-green";
+      if (step3 === 5 && i === 4) c = "active-green";
+      rNew.innerHTML += `<div class="ram-cell"><div class="cell-box ${c}">${v}</div><div class="cell-idx">[${i}]</div></div>`;
+    });
+
+    // Mensajes de traza
+    const fb = document.getElementById('fb-ex3');
+    if(step3 === 0) fb.innerText = "Presiona el botón para iniciar la clonación elemento por elemento.";
+    else if(step3 <= 4) fb.innerText = `Copiando: viejo[${step3-1}] (${oldVals[step3-1]}) -> nuevo[${step3-1}]`;
+    else if(step3 === 5) fb.innerText = "Último paso: Se añade con éxito el 55 en la posición nuevo[4]. El viejo array puede ser eliminado por el recolector de basura de Java.";
+  }
+
+  function nextEx3() {
+    if(step3 < 4) {
+      newVals[step3] = oldVals[step3];
+      step3++;
+    } else if(step3 === 4) {
+      newVals[4] = 55;
+      step3++;
+      document.getElementById('btn-ex3').disabled = true;
+    }
+    renderEx3();
+  }
+
+  // Carga inicial
+  window.onload = function() {
+    renderEx1();
+    renderEx3();
+    document.getElementById('fb-ex2').innerText = "Haz clic en el botón para simular qué pasa si intentas escribir en el índice [4].";
+  };
+</script>
+</body>
+</html>

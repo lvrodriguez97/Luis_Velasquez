@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Práctica: Arrays Bidimensionales en Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --border2: #3d444d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --blue: #388bfd;
+    --blue-bg: #1f3358;
+    --blue-text: #79c0ff;
+    --amber: #d29922;
+    --amber-bg: #341a00;
+    --amber-text: #e3b341;
+    --green: #3fb950;
+    --green-bg: #1a2d1a;
+    --green-text: #7ee787;
+    --red: #f85149;
+    --red-bg: #300a0a;
+    --red-text: #ffa198;
+    --purple: #a371f7;
+    --purple-text: #d2a8ff;
+    --teal-text: #39d3d3;
+    --font-code: 'JetBrains Mono', monospace;
+    --font-ui: 'Syne', sans-serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-badge {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--blue);
+    letter-spacing: .05em;
+  }
+  .header-title {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  /* CONTAINER */
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+
+  .main-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+  }
+
+  .intro-p {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .highlight-word {
+    color: var(--blue-text);
+    font-weight: 600;
+  }
+
+  /* CARD SECTIONS */
+  .section-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 20 rgba(0,0,0,0.15);
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-num {
+    font-family: var(--font-code);
+    font-size: 12px;
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--blue);
+  }
+
+  .section-p {
+    font-size: 14.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: var(--font-code);
+    font-size: 13.5px;
+    line-height: 1.65;
+    overflow-x: auto;
+    color: var(--text);
+    margin-top: 12px;
+    white-space: pre;
+  }
+  .code-block .kw  { color: #ff7b72; }
+  .code-block .ty  { color: var(--teal-text); }
+  .code-block .num { color: var(--amber-text); }
+  .code-block .str { color: var(--green-text); }
+  .code-block .cm  { color: var(--muted); font-style: italic; }
+
+  /* MATRIX VISUALIZER */
+  .matrix-viz {
+    margin-top: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .matrix-viz-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .matrix-viz-label {
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .matrix-viz-name {
+    font-family: var(--font-code);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--teal-text);
+  }
+  .matrix-viz-size {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg4);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  
+  .matrix-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .matrix-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .row-index-label {
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: var(--purple-text);
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .matrix-cells {
+    display: flex;
+    gap: 6px;
+  }
+
+  .matrix-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 68px;
+  }
+
+  .matrix-cell-value {
+    width: 100%;
+    padding: 12px 6px;
+    border: 2px solid var(--border2);
+    background: var(--bg3);
+    font-family: var(--font-code);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--amber-text);
+    text-align: center;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .matrix-cell-value:hover {
+    border-color: var(--blue);
+    background: var(--bg4);
+  }
+
+  .matrix-cell.hl .matrix-cell-value {
+    background: var(--blue-bg);
+    border-color: var(--blue);
+    color: var(--blue-text);
+  }
+
+  .matrix-cell.hl-loop .matrix-cell-value {
+    background: var(--green-bg);
+    border-color: var(--green);
+    color: var(--green-text);
+  }
+
+  .matrix-cell-index {
+    margin-top: 4px;
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: var(--muted);
+  }
+  
+  .matrix-cell-index .bracket { color: var(--border2); }
+  .matrix-cell-index .idx-num { color: var(--purple-text); }
+
+  .col-headers-row {
+    display: flex;
+    padding-left: 68px;
+    margin-bottom: 4px;
+  }
+  .col-header-label {
+    width: 68px;
+    margin-right: 6px;
+    text-align: center;
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: var(--teal-text);
+  }
+
+  /* INTERACTIVE DETECTED PANEL */
+  .interactive-panel {
+    margin-top: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  
+  .panel-code-output {
+    font-family: var(--font-code);
+    font-size: 14px;
+    color: var(--blue-text);
+    background: var(--bg2);
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  /* CONSOLE OUTPUT */
+  .console-out {
+    margin-top: 20px;
+    background: #090d12;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .console-header {
+    background: var(--bg4);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .05em;
+  }
+  .con-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .con-dot.r { background: #f85149; }
+  .con-dot.a { background: #d29922; }
+  .con-dot.g { background: #3fb950; }
+  .console-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; font-family: var(--font-code); font-size: 13px; }
+  .console-line { color: var(--text); display: flex; align-items: center; }
+  .console-line .con-prompt { color: var(--muted); margin-right: 10px; }
+  .console-line .con-val { color: var(--green-text); }
+
+  /* CALLOUT BOXES */
+  .callout {
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    border-left: 4px solid;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+  .callout.red { background: var(--red-bg); border-color: var(--red); color: var(--red-text); }
+  .callout.amber { background: var(--amber-bg); border-color: var(--amber); color: var(--amber-text); }
+
+  /* RULES GRID */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .rule-item {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .rule-item strong {
+    color: var(--purple-text);
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+  .rule-item p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* INTERACTIVE STEP VISUALIZER */
+  .step-viz {
+    margin-top: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .step-toolbar {
+    background: var(--bg4);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .step-toolbar-title {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    flex: 1;
+  }
+  .step-counter {
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .step-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--font-code);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+    white-space: nowrap;
+  }
+  .step-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue-text); }
+  .step-btn:disabled { opacity: 0.3; cursor: default; }
+  .step-btn.next-btn { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-text); }
+  .step-btn.next-btn:hover:not(:disabled) { background: var(--blue); color: #fff; }
+  .step-body { padding: 20px 24px; }
+  
+  .step-desc {
+    font-family: var(--font-code);
+    font-size: 13px;
+    line-height: 1.6;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    min-height: 46px;
+  }
+  .step-desc.green { border-left-color: var(--green); }
+  
+  .vars-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .var-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-family: var(--font-code);
+    font-size: 13px;
+  }
+  .vn  { color: var(--teal-text); }
+  .veq { color: var(--muted); margin: 0 2px; }
+  .vv  { color: var(--amber-text); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span class="header-badge">DOCUMENTACIÓN</span>
+  <span class="header-title">Fundamentos de Programación en Java</span>
+</header>
+
+<div class="container">
+  <h1 class="main-title">Arrays Bidimensionales (Matrices)</h1>
+  <p class="intro-p">Para comprender los <span class="highlight-word">Arrays Bidimensionales en Java</span>, la abstracción más efectiva consiste en estructurarlos como una <strong>tabla de datos organizada por filas y columnas</strong>. Conceptualmente, en Java se definen y manejan como un arreglo que contiene otros arreglos dentro de sí.</p>
+
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-num">1</span> Declaración y Dimensionamiento Espacial
+    </div>
+    <p class="section-p">Cuando se define una matriz indicando sus dimensiones explicitas, el primer par de corchetes determina el total de filas, mientras que el segundo par determina las columnas asignadas a cada una.</p>
+    
+    <div class="code-block"><span class="kw">public class</span> <span class="ty">MatrizBasica</span> {
+    <span class="kw">public static void</span> <span class="ty">main</span>(String[] args) {
+        <span class="cm">// Declaración de una matriz con 3 filas y 4 columnas</span>
+        <span class="ty">int</span>[][] matriz = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">3</span>][<span class="num">4</span>];
+
+        <span class="cm">// Asignación de datos utilizando las coordenadas explícitas [fila][columna]</span>
+        matriz[<span class="num">0</span>][<span class="num">0</span>] = <span class="num">5</span>;   <span class="cm">// Primera fila, primera columna</span>
+        matriz[<span class="num">0</span>][<span class="num">3</span>] = <span class="num">21</span>;  <span class="cm">// Primera fila, última columna</span>
+        matriz[<span class="num">2</span>][<span class="num">2</span>] = <span class="num">45</span>;  <span class="cm">// Última fila, tercera columna</span>
+    }
+}</div>
+
+    <div class="matrix-viz">
+      <div class="matrix-viz-header">
+        <span class="matrix-viz-label">Mapa de Memoria Interactivo</span>
+        <span class="matrix-viz-name">matriz</span>
+        <span class="matrix-viz-size">3 x 4</span>
+      </div>
+      
+      <p class="section-p" style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Haga clic en cualquier celda para generar su instrucción de acceso correspondiente:</p>
+
+      <div class="matrix-grid-wrapper">
+        <div class="col-headers-row">
+          <div class="col-header-label">col [0]</div>
+          <div class="col-header-label">col [1]</div>
+          <div class="col-header-label">col [2]</div>
+          <div class="col-header-label">col [3]</div>
+        </div>
+        
+        <div class="matrix-row">
+          <div class="row-index-label">fila [0]</div>
+          <div class="matrix-cells">
+            <div class="matrix-cell hl" data-f="0" data-c="0" data-val="5" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">5</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">0</span><span class="bracket">][</span><span class="idx-num">0</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="0" data-c="1" data-val="12" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">12</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">0</span><span class="bracket">][</span><span class="idx-num">1</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="0" data-c="2" data-val="8" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">8</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">0</span><span class="bracket">][</span><span class="idx-num">2</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="0" data-c="3" data-val="21" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">21</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">0</span><span class="bracket">][</span><span class="idx-num">3</span><span class="bracket">]</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="matrix-row">
+          <div class="row-index-label">fila [1]</div>
+          <div class="matrix-cells">
+            <div class="matrix-cell" data-f="1" data-c="0" data-val="3" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">3</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">1</span><span class="bracket">][</span><span class="idx-num">0</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="1" data-c="1" data-val="19" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">19</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">1</span><span class="bracket">][</span><span class="idx-num">1</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="1" data-c="2" data-val="14" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">14</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">1</span><span class="bracket">][</span><span class="idx-num">1</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="1" data-c="3" data-val="7" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">7</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">1</span><span class="bracket">][</span><span class="idx-num">3</span><span class="bracket">]</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="matrix-row">
+          <div class="row-index-label">fila [2]</div>
+          <div class="matrix-cells">
+            <div class="matrix-cell" data-f="2" data-c="0" data-val="90" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">90</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">2</span><span class="bracket">][</span><span class="idx-num">0</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="2" data-c="1" data-val="0" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">0</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">2</span><span class="bracket">][</span><span class="idx-num">1</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="2" data-c="2" data-val="45" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">45</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">2</span><span class="bracket">][</span><span class="idx-num">2</span><span class="bracket">]</span></div>
+            </div>
+            <div class="matrix-cell" data-f="2" data-c="3" data-val="11" onclick="inspectCell(this)">
+              <div class="matrix-cell-value">11</div>
+              <div class="matrix-cell-index"><span class="bracket">[</span><span class="idx-num">2</span><span class="bracket">][</span><span class="idx-num">3</span><span class="bracket">]</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-panel">
+        <div class="panel-code-output" id="instruccion-java">
+          <span class="kw">int</span> valor = matriz[<span class="num">0</span>][<span class="num">0</span>]; <span class="cm">// Devuelve: 5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-num">2</span> Interpretación de la Propiedad .length
+    </div>
+    <p class="section-p">Al tratar con matrices, la propiedad <code style="color:var(--teal-text)">.length</code> cambia su comportamiento dependiendo del nivel de anidamiento al que se aplique:</p>
+    
+    <div class="rules-grid">
+      <div class="rule-item">
+        <strong>matriz.length</strong>
+        <p>Retorna la cantidad total de filas que componen la estructura bidimensional.</p>
+      </div>
+      <div class="rule-item">
+        <strong>matriz[f].length</strong>
+        <p>Retorna la cantidad de columnas contenidas específicamente en la fila indicada por el índice f.</p>
+      </div>
+    </div>
+
+    <div class="callout amber">
+      <strong>[ESTRUCTURAS IRREGULARES]</strong> En Java, cada fila puede poseer un tamaño de columnas diferente debido a que una matriz es un arreglo de arreglos independientes. A este tipo de matriz se le denomina <code>Jagged Array</code>.
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-num">3</span> Recorrido Completo Mediante Ciclos Anidados
+    </div>
+    <p class="section-p">Para procesar todos los elementos, se ejecuta un bucle externo encargado de controlar el desplazamiento entre filas y un bucle interno asignado al recorrido de las columnas de dicha fila.</p>
+    
+    <div class="code-block"><span class="kw">public class</span> <span class="ty">IterarMatriz</span> {
+    <span class="kw">public static void</span> <span class="ty">main</span>(String[] args) {
+        <span class="ty">int</span>[][] datos = {
+            {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>},
+            {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}
+        };
+
+        <span class="kw">for</span> (<span class="ty">int</span> f = <span class="num">0</span>; f &lt; datos.length; f++) {
+            <span class="kw">for</span> (<span class="ty">int</span> c = <span class="num">0</span>; c &lt; datos[f].length; c++) {
+                System.out.print(datos[f][c] + <span class="str">" "</span>);
+            }
+            System.out.println(); <span class="cm">// Salto al finalizar cada fila</span>
+        }
+    }
+}</div>
+
+    <div class="step-viz">
+      <div class="step-toolbar">
+        <span class="step-toolbar-title">Simulador de Bucles Anidados &mdash; Matriz 2x3</span>
+        <span class="step-counter" id="loop-counter">Paso 1 / 6</span>
+        <button class="step-btn" id="loop-prev" disabled>Anterior</button>
+        <button class="step-btn next-btn" id="loop-next">Siguiente</button>
+      </div>
+      <div class="step-body">
+        <div class="step-desc green" id="loop-desc">Inicializando el recorrido en las coordenadas correspondientes.</div>
+        <div class="vars-row">
+          <div class="var-chip"><span class="vn">f</span><span class="veq">=</span><span class="vv" id="var-f">0</span></div>
+          <div class="var-chip"><span class="vn">c</span><span class="veq">=</span><span class="vv" id="var-c">0</span></div>
+          <div class="var-chip"><span class="vn">datos[f][c]</span><span class="veq">=</span><span class="vv" id="var-val">1</span></div>
+        </div>
+
+        <div class="matrix-grid-wrapper">
+          <div class="matrix-row">
+            <div class="row-index-label">fila [0]</div>
+            <div class="matrix-cells">
+              <div class="matrix-cell hl-loop" id="sc-0-0">
+                <div class="matrix-cell-value">1</div>
+                <div class="matrix-cell-index">[0][0]</div>
+              </div>
+              <div class="matrix-cell" id="sc-0-1">
+                <div class="matrix-cell-value">2</div>
+                <div class="matrix-cell-index">[0][1]</div>
+              </div>
+              <div class="matrix-cell" id="sc-0-2">
+                <div class="matrix-cell-value">3</div>
+                <div class="matrix-cell-index">[0][2]</div>
+              </div>
+            </div>
+          </div>
+          <div class="matrix-row">
+            <div class="row-index-label">fila [1]</div>
+            <div class="matrix-cells">
+              <div class="matrix-cell" id="sc-1-0">
+                <div class="matrix-cell-value">4</div>
+                <div class="matrix-cell-index">[1][0]</div>
+              </div>
+              <div class="matrix-cell" id="sc-1-1">
+                <div class="matrix-cell-value">5</div>
+                <div class="matrix-cell-index">[1][1]</div>
+              </div>
+              <div class="matrix-cell" id="sc-1-2">
+                <div class="matrix-cell-value">6</div>
+                <div class="matrix-cell-index">[1][2]</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="console-out">
+          <div class="console-header">
+            <span class="con-dot r"></span>
+            <span class="con-dot a"></span>
+            <span class="con-dot g"></span>
+            <span style="margin-left:6px">Salida esperada en Consola</span>
+          </div>
+          <div class="console-body" id="console-output-area">
+            <div class="console-line"><span class="con-prompt">&gt;</span><span class="con-val">1 </span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-num">4</span> Desbordamiento en Matrices
+    </div>
+    <p class="section-p">El error de índice fuera de rango ocurre de forma independiente tanto si la coordenada de la fila como la coordenada de la columna superan los límites establecidos por sus respectivas dimensiones.</p>
+    
+    <div class="code-block"><span class="kw">int</span>[][] muestra = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">2</span>][<span class="num">2</span>]; <span class="cm">// Índices válidos: 0 y 1</span>
+
+<span class="cm">// Error fatal de ejecución:</span>
+<span class="cm">// La fila 0 existe, pero la columna 2 está fuera de rango.</span>
+System.out.println(muestra[<span class="num">0</span>][<span class="num">2</span>]); </div>
+
+    <div class="callout red">
+      <strong>[EXCEPCIÓN EN MATRICES]</strong> Provocar este escenario lanzará un <code>ArrayIndexOutOfBoundsException</code>, interrumpiendo el flujo del programa inmediatamente.
+    </div>
+  </div>
+</div>
+
+<script>
+  /* LÓGICA DEL MAPA DE MEMORIA INTERACTIVO */
+  function inspectCell(element) {
+    const cells = document.querySelectorAll('.matrix-cell');
+    cells.forEach(c => c.classList.remove('hl'));
+    
+    element.classList.add('hl');
+    
+    const f = element.getAttribute('data-f');
+    const c = element.getAttribute('data-c');
+    const val = element.getAttribute('data-val');
+    
+    const output = document.getElementById('instruccion-java');
+    output.innerHTML = `<span class="kw">int</span> valor = matriz[<span class="num">${f}</span>][<span class="num">${c}</span>]; <span class="cm">// Devuelve: ${val}</span>`;
+  }
+
+  /* LÓGICA DE LA TRAZA PASO A PASO DEL BUCLE */
+  const steps = [
+    { f: 0, c: 0, val: 1, desc: "El bucle externo inicia en la fila 0. El bucle interno procesa la columna 0.", out: ["1 "] },
+    { f: 0, c: 1, val: 2, desc: "El bucle externo sigue en la fila 0. El bucle interno avanza a la columna 1.", out: ["1 2 "] },
+    { f: 0, c: 2, val: 3, desc: "El bucle interno llega a la última columna de la fila 0. Se imprime el valor.", out: ["1 2 3 "] },
+    { f: 1, c: 0, val: 4, desc: "El bucle interno terminó. El ciclo externo avanza a la fila 1 y el interno se reinicia en 0.", out: ["1 2 3 ", "4 "] },
+    { f: 1, c: 1, val: 5, desc: "Bucle externo en fila 1. El ciclo interno se desplaza a la columna 1.", out: ["1 2 3 ", "4 5 "] },
+    { f: 1, c: 2, val: 6, desc: "Última posición procesada. Ambos bucles finalizan tras esta instrucción.", out: ["1 2 3 ", "4 5 6 "] }
+  ];
+
+  let currentStep = 0;
+  const btnPrev = document.getElementById('loop-prev');
+  const btnNext = document.getElementById('loop-next');
+  const txtCounter = document.getElementById('loop-counter');
+  const txtDesc = document.getElementById('loop-desc');
+  const valF = document.getElementById('var-f');
+  const valC = document.getElementById('var-c');
+  const valVal = document.getElementById('var-val');
+  const consoleArea = document.getElementById('console-output-area');
+
+  function updateStep(index) {
+    // Actualizar estados visuales de los botones
+    btnPrev.disabled = index === 0;
+    btnNext.disabled = index === steps.length - 1;
+    
+    txtCounter.innerText = `Paso ${index + 1} / ${steps.length}`;
+    
+    const data = steps[index];
+    txtDesc.innerText = data.desc;
+    valF.innerText = data.f;
+    valC.innerText = data.c;
+    valVal.innerText = data.val;
+
+    // Quitar clases previas de realce en la simulación
+    document.querySelectorAll('.matrix-cell').forEach(c => c.classList.remove('hl-loop'));
+    
+    // Añadir realce a la celda activa del paso actual
+    const currentCell = document.getElementById(`sc-${data.f}-${data.c}`);
+    if (currentCell) {
+      currentCell.classList.add('hl-loop');
+    }
+
+    // Renderizar consola simulada
+    consoleArea.innerHTML = '';
+    data.out.forEach(line => {
+      const div = document.createElement('div');
+      div.className = 'console-line';
+      div.innerHTML = `<span class="con-prompt">&gt;</span><span class="con-val">${line}</span>`;
+      consoleArea.appendChild(div);
+    });
+  }
+
+  btnPrev.addEventListener('click', () => {
+    if (currentStep > 0) {
+      currentStep--;
+      updateStep(currentStep);
+    }
+  });
+
+  btnNext.addEventListener('click', () => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      updateStep(currentStep);
+    }
+  });
+
+  // Inicializar primer paso al cargar
+  updateStep(0);
+</script>
+
+</body>
+</html>

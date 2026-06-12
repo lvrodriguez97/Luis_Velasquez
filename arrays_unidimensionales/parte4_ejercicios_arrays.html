@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casos Prácticos: Métodos con Arrays en Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --border2: #3d444d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --blue: #388bfd;
+    --blue-bg: #1f3358;
+    --blue-text: #79c0ff;
+    --amber: #d29922;
+    --amber-bg: #341a00;
+    --amber-text: #e3b341;
+    --green: #3fb950;
+    --green-bg: #1a2d1a;
+    --green-text: #7ee787;
+    --purple-text: #d2a8ff;
+    --teal-text: #39d3d3;
+    --font-code: 'JetBrains Mono', monospace;
+    --font-ui: 'Syne', sans-serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .badge {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--blue);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+
+  .main-title { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .subtitle { color: var(--muted); margin-top: 4px; font-size: 15px; margin-bottom: 32px; }
+
+  .card-exercise {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
+  .exercise-header {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .exercise-subheader {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 10px;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+  /* CODE BOX */
+  .code-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: var(--font-code);
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    color: var(--text);
+    white-space: pre;
+  }
+  .code-block .kw  { color: #ff7b72; font-weight: 500; }
+  .code-block .ty  { color: var(--teal-text); }
+  .code-block .num { color: var(--amber-text); }
+  .code-block .str { color: var(--green-text); }
+  .code-block .cm  { color: var(--muted); font-style: italic; }
+  
+  .line-active {
+    background: rgba(56, 139, 253, 0.15);
+    border-left: 3px solid var(--blue);
+    display: block;
+    width: 100%;
+    padding-left: 4px;
+  }
+
+  /* VISUAL CONSOLE */
+  .visual-area {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .ram-title {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .memory-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+    flex-wrap: wrap;
+  }
+  .ram-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .cell-box {
+    width: 46px;
+    height: 46px;
+    background: var(--bg3);
+    border: 2px solid var(--border2);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code);
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+  .cell-idx {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .cell-box.pointer { border-color: var(--blue); background: var(--blue-bg); }
+  .cell-box.success { border-color: var(--green); background: var(--green-bg); color: var(--green-text); }
+
+  /* MONITOR VARIABLES */
+  .monitor {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: var(--radius);
+    margin-top: 10px;
+    font-family: var(--font-code);
+    font-size: 13px;
+  }
+  .monitor span { color: var(--purple-text); font-weight: bold; }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .btn {
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .btn:hover:not(:disabled) { background: #30363d; border-color: var(--muted); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .feedback-text {
+    font-family: var(--font-code);
+    font-size: 12.5px;
+    color: var(--amber-text);
+    background: var(--amber-bg);
+    padding: 6px 12px;
+    border-radius: 4px;
+    flex: 1;
+    border-left: 3px solid var(--amber);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="badge">PROGRAMACIÓN MODULAR</span>
+  <h1 style="font-size: 18px; font-weight: 700;">Simulador Práctico: Pasando Arrays a Métodos</h1>
+</header>
+
+<div class="container">
+  <h2 class="main-title">Ejercicios Resueltos con Funciones</h2>
+  <p class="subtitle">En Java, los procesos lógicos no se escriben sueltos. Se encapsulan en funciones que reciben el array, lo recorren mediante bucles y devuelven un único resultado estructurado.</p>
+
+  <div class="card-exercise">
+    <div class="exercise-header">Ejercicio 1: Encontrar el número más alto</div>
+    <div class="exercise-subheader">Método que recorre el array comparando elementos para extraer el valor máximo.</div>
+    
+    <div class="split">
+      <div class="code-block" id="code-ex1"><span id="ex1-line1"><span class="kw">public static int</span> <span class="ty">obtenerMaximo</span>(<span class="ty">int</span>[] arr) {</span>
+<span id="ex1-line2">    <span class="ty">int</span> max = arr[<span class="num">0</span>];</span>
+<span id="ex1-line3">    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">1</span>; i &lt; arr.length; i++) {</span>
+<span id="ex1-line4">        <span class="kw">if</span> (arr[i] &gt; max) {</span>
+<span id="ex1-line5">            max = arr[i];</span>
+<span id="ex1-line6">        }</span>
+<span id="ex1-line7">    }</span>
+<span id="ex1-line8">    <span class="kw">return</span> max;</span>
+<span id="ex1-line9">}</span></div>
+      <div class="visual-area">
+        <div>
+          <div class="ram-title">Array de entrada: 'arr'</div>
+          <div class="memory-row" id="row-ex1"></div>
+          <div class="monitor">
+            Variables internas: <br>
+            • <code>i</code> = <span id="v-ex1-i">-</span> <br>
+            • <code>max</code> = <span id="v-ex1-max">-</span>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btn-ex1" onclick="stepEx1()">Siguiente Línea</button>
+          <div class="feedback-text" id="fb-ex1">Presiona para iniciar el análisis del método.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-exercise">
+    <div class="exercise-header">Ejercicio 2: Calcular el promedio de notas</div>
+    <div class="exercise-subheader">Método de acumulación (sumatoria) y división final por la propiedad matemática .length.</div>
+    
+    <div class="split">
+      <div class="code-block" id="code-ex2"><span id="ex2-line1"><span class="kw">public static double</span> <span class="ty">calcularPromedio</span>(<span class="ty">int</span>[] notas) {</span>
+<span id="ex2-line2">    <span class="ty">int</span> suma = <span class="num">0</span>;</span>
+<span id="ex2-line3">    <span class="kw">for</span> (<span class="ty">int</span> n : notas) {</span>
+<span id="ex2-line4">        suma += n;</span>
+<span id="ex2-line5">    }</span>
+<span id="ex2-line6">    <span class="kw">return</span> (<span class="ty">double</span>) suma / notas.length;</span>
+<span id="ex2-line7">}</span></div>
+      <div class="visual-area">
+        <div>
+          <div class="ram-title">Array de entrada: 'notas'</div>
+          <div class="memory-row" id="row-ex2"></div>
+          <div class="monitor">
+            Variables de acumulación: <br>
+            • <code>n</code> (Nota actual) = <span id="v-ex2-n">-</span> <br>
+            • <code>suma</code> = <span id="v-ex2-suma">0</span> <br>
+            • <code>Resultado Final</code> = <span id="v-ex2-res">-</span>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btn-ex2" onclick="stepEx2()">Siguiente Nota</button>
+          <div class="feedback-text" id="fb-ex2">Presiona para iniciar el ciclo For-Each de suma.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-exercise">
+    <div class="exercise-header">Ejercicio 3: Buscar un elemento (¿Existe el ID en el sistema?)</div>
+    <div class="exercise-subheader">Algoritmo de búsqueda que retorna el índice donde se encuentra el objetivo, o -1 si no existe. Objetivo buscado: 99.</div>
+    
+    <div class="split">
+      <div class="code-block" id="code-ex3"><span id="ex3-line1"><span class="kw">public static int</span> <span class="ty">buscarElemento</span>(<span class="ty">int</span>[] arr, <span class="ty">int</span> objetivo) {</span>
+<span id="ex3-line2">    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; arr.length; i++) {</span>
+<span id="ex3-line3">        <span class="kw">if</span> (arr[i] == objetivo) {</span>
+<span id="ex3-line4">            <span class="kw">return</span> i; <span class="cm">// Retorna la coordenada</span></span>
+<span id="ex3-line5">        }</span>
+<span id="ex3-line6">    }</span>
+<span id="ex3-line7">    <span class="kw">return</span> -<span class="num">1</span>;</span>
+<span id="ex3-line8">}</span></div>
+      <div class="visual-area">
+        <div>
+          <div class="ram-title">Array de ids apuntado en memoria</div>
+          <div class="memory-row" id="row-ex3"></div>
+          <div class="monitor">
+            Variables de control: <br>
+            • <code>i</code> (Índice) = <span id="v-ex3-i">-</span> <br>
+            • <code>arr[i]</code> (Valor) = <span id="v-ex3-val">-</span> <br>
+            • <code>Retorno del método</code> = <span id="v-ex3-ret">Corriendo...</span>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btn-ex3" onclick="stepEx3()">Siguiente Casilla</button>
+          <div class="feedback-text" id="fb-ex3">Presiona para empezar a escanear el array casilla por casilla.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function setActiveLine(prefix, lines) {
+    document.querySelectorAll(`[id^="${prefix}-line"]`).forEach(el => el.classList.remove('line-active'));
+    lines.forEach(n => {
+      const el = document.getElementById(`${prefix}-line${n}`);
+      if (el) el.classList.add('line-active');
+    });
+  }
+
+  // ==========================================
+  // JS EJERCICIO 1 (MÁXIMO)
+  // ==========================================
+  const dataEx1 = [14, 34, 8, 52, 21];
+  let step1 = 0;
+  let currentMax = dataEx1[0];
+
+  function renderEx1() {
+    const r = document.getElementById('row-ex1');
+    r.innerHTML = '';
+    dataEx1.forEach((v, idx) => {
+      let cClass = "";
+      if (idx === step1) cClass = "pointer";
+      if (v === currentMax && step1 >= 0) cClass = "success";
+      r.innerHTML += `<div class="ram-cell"><div class="cell-box ${cClass}">${v}</div><div class="cell-idx">[${idx}]</div></div>`;
+    });
+  }
+
+  function stepEx1() {
+    if (step1 === 0) {
+      document.getElementById('v-ex1-i').innerText = "0";
+      document.getElementById('v-ex1-max').innerText = currentMax;
+      document.getElementById('fb-ex1').innerText = "Línea 2: Inicializamos 'max' con el primer elemento arr[0] (14).";
+      setActiveLine('ex1', [2]);
+      step1 = 1;
+    } else if (step1 < dataEx1.length) {
+      let vActual = dataEx1[step1];
+      document.getElementById('v-ex1-i').innerText = step1;
+
+      if (vActual > currentMax) {
+        document.getElementById('fb-ex1').innerText = `Evaluando índice [${step1}]: ¿${vActual} > ${currentMax}? SÍ. Actualizamos la variable 'max'.`;
+        currentMax = vActual;
+        setActiveLine('ex1', [3, 4, 5]);
+      } else {
+        document.getElementById('fb-ex1').innerText = `Evaluando índice [${step1}]: ¿${vActual} > ${currentMax}? NO. 'max' se mantiene igual.`;
+        setActiveLine('ex1', [3, 4]);
+      }
+      document.getElementById('v-ex1-max').innerText = currentMax;
+      step1++;
+    } else {
+      document.getElementById('fb-ex1').innerText = `Fin del ciclo. El método hace un 'return ${currentMax};' hacia el main.`;
+      document.getElementById('btn-ex1').disabled = true;
+      setActiveLine('ex1', [7, 8]);
+    }
+    renderEx1();
+  }
+
+  // ==========================================
+  // JS EJERCICIO 2 (PROMEDIO)
+  // ==========================================
+  const dataEx2 = [80, 90, 70, 100];
+  let step2 = 0;
+  let acumuladorSuma = 0;
+
+  function renderEx2() {
+    const r = document.getElementById('row-ex2');
+    r.innerHTML = '';
+    dataEx2.forEach((v, idx) => {
+      let cClass = (idx === step2) ? "pointer" : "";
+      if (step2 >= dataEx2.length) cClass = "success";
+      r.innerHTML += `<div class="ram-cell"><div class="cell-box ${cClass}">${v}</div><div class="cell-idx">[${idx}]</div></div>`;
+    });
+  }
+
+  function stepEx2() {
+    if (step2 < dataEx2.length) {
+      let nota = dataEx2[step2];
+      acumuladorSuma += nota;
+      document.getElementById('v-ex2-n').innerText = nota;
+      document.getElementById('v-ex2-suma').innerText = acumuladorSuma;
+      document.getElementById('fb-ex2').innerText = `Bucle For-Each extrae la nota ${nota} y la suma al acumulador.`;
+      setActiveLine('ex2', [3, 4]);
+      step2++;
+    } else if (step2 === dataEx2.length) {
+      let prom = acumuladorSuma / dataEx2.length;
+      document.getElementById('v-ex2-res').innerText = prom;
+      document.getElementById('fb-ex2').innerText = `Línea 6: Fuera del bucle se calcula (${acumuladorSuma} / ${dataEx2.length}) = ${prom}.`;
+      document.getElementById('btn-ex2').disabled = true;
+      setActiveLine('ex2', [5, 6]);
+      step2++;
+    }
+    renderEx2();
+  }
+
+  // ==========================================
+  // JS EJERCICIO 3 (BÚSQUEDA)
+  // ==========================================
+  const dataEx3 = [12, 45, 99, 7, 23];
+  let step3 = 0;
+  const objetivo = 99;
+  let encontrado = false;
+
+  function renderEx3() {
+    const r = document.getElementById('row-ex3');
+    r.innerHTML = '';
+    dataEx3.forEach((v, idx) => {
+      let cClass = "";
+      if (idx === step3 && !encontrado) cClass = "pointer";
+      if (idx === 2 && encontrado) cClass = "success";
+      r.innerHTML += `<div class="ram-cell"><div class="cell-box ${cClass}">${v}</div><div class="cell-idx">[${idx}]</div></div>`;
+    });
+  }
+
+  function stepEx3() {
+    if (step3 < dataEx3.length && !encontrado) {
+      let vActual = dataEx3[step3];
+      document.getElementById('v-ex3-i').innerText = step3;
+      document.getElementById('v-ex3-val').innerText = vActual;
+
+      if (vActual === objetivo) {
+        document.getElementById('fb-ex3').innerText = `¡Encontrado! arr[${step3}] es igual a ${objetivo}. El método ejecuta 'return ${step3};' inmediatamente y rompe el ciclo.`;
+        document.getElementById('v-ex3-ret').innerText = `Retornó índice: ${step3}`;
+        encontrado = true;
+        document.getElementById('btn-ex3').disabled = true;
+        setActiveLine('ex3', [3, 4]);
+      } else {
+        document.getElementById('fb-ex3').innerText = `¿arr[${step3}] (${vActual}) == ${objetivo}? No. Avanzamos al siguiente índice.`;
+        setActiveLine('ex3', [2, 3]);
+        step3++;
+      }
+    }
+    renderEx3();
+  }
+
+  // Carga inicial
+  window.onload = function() {
+    renderEx1();
+    renderEx2();
+    renderEx3();
+    setActiveLine('ex1', [1]);
+    setActiveLine('ex2', [2]);
+    setActiveLine('ex3', [2]);
+  };
+</script>
+</body>
+</html>
